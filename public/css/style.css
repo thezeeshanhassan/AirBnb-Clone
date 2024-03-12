@@ -86,6 +86,12 @@ body {
 
 .card-body a {
     text-decoration: none;
+
+    color: rgba(8, 8, 8, 0.901);
+}
+
+.card-body a:hover {
+    text-decoration: underline;
     color: #BB2C35;
 }
 
@@ -113,4 +119,9 @@ body {
     background-color: #BB2C35 !important;
     border: none !important;
     margin-left: 1em;
+}
+
+.show-img {
+    border: none;
+    border-radius: 5px !important;
 }

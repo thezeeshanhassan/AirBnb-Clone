@@ -1,27 +1,31 @@
 <% layout(`layouts/boilerplate`)%>
     <br><br>
-    <div class="card">
-        <img src="<%=detailByID.image[`url`] %>" class="card-img-top" alt=" <%= detailByID.title%>">
-        <div class="card-body">
-            <p class="card-text">
+    <div class="row">
+        <div class="col-8 offset-1">
+            <div class="card">
+                <img src="<%=detailByID.image[`url`] %>" class="card-img-top show-img" alt=" <%= detailByID.title%>">
+                <div class="card-body">
+                    <p class="card-text">
 
-            <h2>
-                <%=detailByID.title%>
-            </h2>
-            <br>
-            <%=detailByID.description%>
-                <br>
-                <b>&dollar; <%=detailByID.price.toLocaleString("en-US")%></b>
-                <br>
-                <%=detailByID.location%>
+                    <h2>
+                        <%=detailByID.title%>
+                    </h2>
                     <br>
-                    <%=detailByID.country%>
-                        </p>
-        </div>
-        <div class="show-btn-div">
-            <a href="/listings/<%=detailByID._id%>/edit" class="btn btn-dark edit-btn">Edit Experience</a>
-            <form method="POST" action="/listings/<%=detailByID._id%>?_method=DELETE">
-                <button class="btn btn-dark delete-btn">Delete Post</button>
-            </form>
+                    <%=detailByID.description%>
+                        <br>
+                        <b>&dollar; <%=detailByID.price.toLocaleString("en-US")%></b>
+                        <br>
+                        <%=detailByID.location%>
+                            <br>
+                            <%=detailByID.country%>
+                                </p>
+                </div>
+                <div class="show-btn-div">
+                    <a href="/listings/<%=detailByID._id%>/edit" class="btn btn-dark edit-btn">Edit Experience</a>
+                    <form method="POST" action="/listings/<%=detailByID._id%>?_method=DELETE">
+                        <button class="btn btn-dark delete-btn">Delete Post</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
