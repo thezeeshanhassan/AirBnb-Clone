@@ -1,0 +1,45 @@
+<% layout(`layouts/boilerplate`)%>
+    <div class="row form-div">
+        <div class="col-8 offset-1">
+            <form action="/listings" method="POST">
+                <br>
+
+                <div class="mb-3">
+                    <label for="title" class="from-label">Title:</label>
+                    <input type="text" id="title" name="listing[title]" required class="form-control">
+
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="from-label">Description:</label>
+                    <textarea id="description" name="listing[description]" rows="4" required
+                        class="form-control"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="from-label">Image URL:</label>
+                    <input type="text" id="image" name="listing[image]" class="form-control">
+                </div>
+
+                <div class="row">
+                    <div class="mb-3 col-md-4">
+                        <label for="price" class="from-label">Price:</label>
+                        <input type="number" id="price" name="listing[price]" required class="form-control">
+
+                    </div>
+
+                    <div class="mb-3 col-md-8">
+                        <label for="country" class="from-label">Country:</label>
+                        <input type="text" id="country" name="listing[country]" required class="form-control">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="location" class="from-label">Location:</label>
+                    <input type="text" id="location" name="listing[location]" required class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-dark add-btn">Submit Listing</button>
+                <br><br>
+
+            </form>
+        </div>
+    </div>

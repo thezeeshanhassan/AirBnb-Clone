@@ -1,0 +1,49 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index Route</title>
+</head> -->
+<% layout(`layouts/boilerplate`)%>
+
+    <body>
+        <h1>All Listing</h1>
+        <!-- <% for(let listing of allListing){ %> -->
+        <!-- <ul>
+                <li>
+                    <a href="/listing/<%=listing._id %>">
+                        <%= listing.title%>
+                    </a>
+                </li>
+            </ul>
+            <%} %> -->
+        <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-1">
+            <% for(let listing of allListing){ %>
+                <div class="card">
+                    <a href="/listing/<%=listing._id %>">
+                        <img src="<%=listing.image[`url`] %>" class="card-img-top" alt=" <%= listing.title%>">
+                    </a>
+
+                    <div class="card-body">
+                        <h6>
+                            <a href="/listing/<%=listing._id %>">
+                                <%= listing.title%>
+                            </a>
+                        </h6>
+                        <p>
+                            <b>&dollar; <%= listing.price%></b>
+                        </p>
+                        <p>
+                            <%= listing.location%>, <%= listing.country%>
+                        </p>
+                    </div>
+                </div>
+                <%} %>
+        </div>
+    </body>
+
+
+
+    <!-- </html> -->

@@ -1,0 +1,116 @@
+.navbar {
+    background-color: white;
+    height: 5em;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}
+
+.fa-earth-americas {
+    color: #BB2C35;
+    font-size: 1.5em !important;
+}
+
+.nav-link {
+    color: #222222 !important;
+    font-size: 1.0em !important;
+}
+
+.nav-link:hover {
+    color: #BB2C35 !important;
+}
+
+.f-info {
+    background-color: #BB2C35;
+    height: 15em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.links a {
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+.socila-icons i,
+.copyright,
+.links a {
+    color: white !important;
+}
+
+.socila-icons i {
+    margin-right: 1em;
+    cursor: pointer;
+    font-size: 2em;
+    padding: 0.2em;
+    border: 1px;
+    border-radius: 2em;
+}
+
+.socila-icons i:hover {
+    background-color: white;
+    color: #BB2C35 !important;
+    transition: 0.2s ease-in-out !important;
+}
+
+
+/* Card */
+
+.card {
+    border: none;
+    margin-bottom: 2em;
+}
+
+.card-img-top {
+    border-radius: 1em;
+    height: 20em;
+    margin-bottom: 1em;
+    border-radius: 2rem 0rem 2rem 0rem !important;
+}
+
+.card-body {
+    padding: 0px;
+}
+
+.card-body a {
+    text-decoration: none;
+    color: #BB2C35;
+}
+
+/* New Post */
+
+.add-btn {
+    background-color: #BB2C35 !important;
+    border: none !important;
+}
+
+/* Edit Post */
+
+.edit-btn {
+    background-color: #BB2C35 !important;
+    border: none !important;
+}
+
+/* Show Post */
+.show-btn-div {
+    display: flex;
+}
+
+.delete-btn {
+    /* margin: 1em; */
+    background-color: #BB2C35 !important;
+    border: none !important;
+    margin-left: 1em;
+}
