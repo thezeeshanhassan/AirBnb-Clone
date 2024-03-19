@@ -80,6 +80,11 @@ body {
     border-radius: 2rem 0rem 2rem 0rem !important;
 }
 
+.card-img-top:hover {
+    opacity: 0.8 !important;
+    transition: 0.2s ease-in-out !important;
+}
+
 .card-body {
     padding: 0px;
 }

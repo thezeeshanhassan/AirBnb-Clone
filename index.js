@@ -6,7 +6,7 @@ const methodOverride = require(`method-override`);
 const ejsMate = require(`ejs-mate`);
 const wrapAsync = require(`./utils/wrapAsync`);
 const ExpressError = require(`./utils/ExpressError`);
-const listeningSchema = require(``)
+// const listeningSchema = require(``)
 
 const app = express();
 
