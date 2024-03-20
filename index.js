@@ -1,12 +1,13 @@
-const express = require(`express`);
-const mongoose = require(`mongoose`);
-const path = require(`path`);
-const Listing = require(`./models/listing`);
-const methodOverride = require(`method-override`);
-const ejsMate = require(`ejs-mate`);
-const wrapAsync = require(`./utils/wrapAsync`);
-const ExpressError = require(`./utils/ExpressError`);
-// const listeningSchema = require(``)
+const express = require(`express`); // JS Library 
+const mongoose = require(`mongoose`); // Database MonoDb
+const path = require(`path`); // Connect Path of Directories
+const Listing = require(`./models/listing`); // Listing Schema
+const methodOverride = require(`method-override`); // To obtain Patch or Put 
+const ejsMate = require(`ejs-mate`); // For Layouts Like BoilerPlate 
+const wrapAsync = require(`./utils/wrapAsync`); // Function that Execute Other Functions If Error then throw Error
+const ExpressError = require(`./utils/ExpressError`); // Extends JavaScript Error Class 
+const listeningSchema = require(`./schemaValidation`); // Joi Schema Method to validate Schema (Post/Reqs)
+const { error } = require("console");
 
 const app = express();
 
@@ -32,7 +33,18 @@ async function main() {
 }
 // Conection Creation Ends
 
-
+const validateSchema = (req, res, next) => {
+    let { error } = listeningSchema.validate(req.body);
+    if (error) {
+        // If Error Send Error to User 
+        let { details } = error;
+        let errMsg = details[0].message;
+        throw new ExpressError(400, errMsg);
+    }
+    else {
+        next();
+    }
+}
 
 app.get(`/`, (req, res) => {
     res.send(`Working on the PORT ${port}`)
@@ -42,8 +54,6 @@ app.get(`/`, (req, res) => {
 
 app.get(`/listings`, wrapAsync(async (req, res, next) => {
     let allListing = await Listing.find({});
-    // res.send(JSON.parse(allListing));
-    console.log(allListing);
     res.render(`listings/index.ejs`, { allListing });
 }))
 
@@ -57,16 +67,12 @@ app.get(`/listing/new`, (req, res) => {
 app.get(`/listing/:id`, wrapAsync(async (req, res) => {
     let id = req.params.id;
     let detailByID = await Listing.findById(id);
-
     res.render(`listings/show.ejs`, { detailByID });
 }))
 
 //// Insert New Post To Database From User
-
-app.post(`/listings`, wrapAsync(async (req, res, next) => {
-    if (!req.body.listing) {
-        throw new ExpressError(400, "Send Valid Data For Post");
-    }
+app.post(`/listings`, validateSchema, wrapAsync(async (req, res, next) => {
+    // Validating Req.Body that Each Parameter Exists and Validated through Joi
     const newListing = new Listing(req.body.listing);
     await newListing.save();
     res.redirect(`/listings`);
@@ -82,16 +88,15 @@ app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
 }))
 
 // Update Route
-app.patch("/listings/:id", wrapAsync(async (req, res) => {
-    let { id, title, description, image, price, location, country } = req.params;
+app.patch("/listings/:id", validateSchema, wrapAsync(async (req, res) => {
+    let { id } = req.params;
     // let id = req.params.id;
     console.log(id);
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing })
+    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
     res.redirect(`/listings`);
 }))
 
 //// Delete Route
-
 app.delete(`/listings/:id`, wrapAsync(async (req, res) => {
     let id = req.params.id;
     await Listing.findByIdAndDelete(id);
@@ -106,7 +111,6 @@ app.all(`*`, (req, res, next) => {
 
 app.use((err, req, res, next) => {
     let { statusCode = 500, message = "Something Went Wrong" } = err;
-    // res.render(`listings/error.ejs`, { err });
     res.status(statusCode).render(`listings/error.ejs`, { err });
 })
 
