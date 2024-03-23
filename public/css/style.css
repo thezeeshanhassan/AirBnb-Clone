@@ -1,6 +1,6 @@
 .navbar {
     background-color: white;
-    height: 5em;
+    height: 4em;
 }
 
 body {
@@ -15,7 +15,7 @@ body {
 
 .fa-earth-americas {
     color: #BB2C35;
-    font-size: 1.5em !important;
+    font-size: 1.3em !important;
 }
 
 .nav-link {
@@ -68,7 +68,7 @@ body {
 
 /* Card */
 
-.card {
+.listing-card {
     border: none;
     margin-bottom: 2em;
 }
@@ -121,8 +121,8 @@ body {
 
 .delete-btn {
     /* margin: 1em; */
-    background-color: #BB2C35 !important;
-    border: none !important;
+    /* background-color: #BB2C35 !important; */
+    /* border: none !important; */
     margin-left: 1em;
 }
 

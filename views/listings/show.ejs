@@ -2,8 +2,8 @@
     <br><br>
     <div class="row">
         <div class="col-8 offset-1">
-            <div class="card">
-                <img src="<%=detailByID.image[`url`] %>" class="card-img-top show-img" alt=" <%= detailByID.title%>">
+            <div class="listing-card">
+                <img src="<%=detailByID.image[`url`] %>" class="card-img-top show-img " alt=" <%= detailByID.title%>">
                 <div class="card-body">
                     <p class="card-text">
 
@@ -23,9 +23,54 @@
                 <div class="show-btn-div">
                     <a href="/listings/<%=detailByID._id%>/edit" class="btn btn-dark edit-btn">Edit Experience</a>
                     <form method="POST" action="/listings/<%=detailByID._id%>?_method=DELETE">
-                        <button class="btn btn-dark delete-btn">Delete Post</button>
+                        <button class="btn btn-outline-dark delete-btn">Delete Post</button>
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+    <hr>
+    <div class="col-8 offset-1 mt-3 mb-3">
+        <form action="/listings/<%=detailByID._id%>/reviews" method="POST" novalidate class="needs-validation">
+            <h4>Leave A Review</h4>
+            <div>
+
+                <label for="comment" class="from-label">Write Comment</label>
+
+                <textarea name="review[comment]" id="" cols="30" rows="5" class="form-control" required></textarea>
+                <div class="invalid-feedback">Enter Valid Comment</div>
+
+            </div>
+            <div>
+                <label for="ratind" class="from-label">Rating</label>
+                <input type="range" name="review[rating]" id="rating" min="1" max="5" class="form-range">
+            </div>
+            <button class="btn btn-outline-dark">Submit</button>
+        </form>
+        <hr>
+
+        <h4>
+            All Reviews
+        </h4>
+
+        <div class="row">
+            <% for(let review of detailByID.review) {%>
+                <div class="card mt-2 pt-2">
+                    <div class="card-body col-4">
+                        <h6 class="card-subtitle mb-2 text-body-secondary">Zeeshan Hassan</h6>
+                        <p class="card-text">
+                            <%= review.comment%>
+                        </p>
+                        <p card-text>
+                            <%= review.rating%> Stars
+                        </p>
+                        <form action="/listings/<%= detailByID._id%>/review/<%= review._id %>?_method=DELETE"
+                            method="POST" class="mb-2">
+                            <button class="btn btn-outline-dark btn-sm">Delete Review</button>
+                        </form>
+                    </div>
+
+                </div>
+                <%}%>
         </div>
     </div>

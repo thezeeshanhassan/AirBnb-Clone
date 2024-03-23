@@ -6,8 +6,9 @@ const methodOverride = require(`method-override`); // To obtain Patch or Put
 const ejsMate = require(`ejs-mate`); // For Layouts Like BoilerPlate 
 const wrapAsync = require(`./utils/wrapAsync`); // Function that Execute Other Functions If Error then throw Error
 const ExpressError = require(`./utils/ExpressError`); // Extends JavaScript Error Class 
-const listeningSchema = require(`./schemaValidation`); // Joi Schema Method to validate Schema (Post/Reqs)
-const { error } = require("console");
+const { listeningSchema, reviewSchema } = require(`./schemaValidation`); // Joi Schema Method to validate Schema (Post/Reqs)
+const Review = require(`./models/review`); // Review Schema
+
 
 const app = express();
 
@@ -31,12 +32,13 @@ main().then(() => {
 async function main() {
     await mongoose.connect(`mongodb://127.0.0.1:27017/wanderLust`);
 }
+
 // Conection Creation Ends
 
-const validateSchema = (req, res, next) => {
+// Validation Middlewares
+const validateListingSchema = (req, res, next) => {
     let { error } = listeningSchema.validate(req.body);
     if (error) {
-        // If Error Send Error to User 
         let { details } = error;
         let errMsg = details[0].message;
         throw new ExpressError(400, errMsg);
@@ -45,6 +47,20 @@ const validateSchema = (req, res, next) => {
         next();
     }
 }
+
+// const validateReviewSchema = (req, res, next) => {
+//     console.log(req.body);
+//     let { error } = reviewSchema.validate(req.body);
+//     if (error) {
+//         let { details } = error;
+//         let errMsg = details[0].message;
+//         throw new ExpressError(400, errMsg);
+//     }
+//     else {
+//         console.log(req.body);
+//         next();
+//     }
+// }
 
 app.get(`/`, (req, res) => {
     res.send(`Working on the PORT ${port}`)
@@ -59,19 +75,19 @@ app.get(`/listings`, wrapAsync(async (req, res, next) => {
 
 //// Route to Create New Post
 
-app.get(`/listing/new`, (req, res) => {
+app.get(`/listings/new`, (req, res) => {
     res.render(`listings/new.ejs`);
 })
 
-//// Route to See Detail of Each Post
-app.get(`/listing/:id`, wrapAsync(async (req, res) => {
+//// Route to See Detail of Each Post (Show Route)
+app.get(`/listings/:id`, wrapAsync(async (req, res) => {
     let id = req.params.id;
-    let detailByID = await Listing.findById(id);
+    let detailByID = await Listing.findById(id).populate(`review`);
     res.render(`listings/show.ejs`, { detailByID });
 }))
 
 //// Insert New Post To Database From User
-app.post(`/listings`, validateSchema, wrapAsync(async (req, res, next) => {
+app.post(`/listings`, validateListingSchema, wrapAsync(async (req, res, next) => {
     // Validating Req.Body that Each Parameter Exists and Validated through Joi
     const newListing = new Listing(req.body.listing);
     await newListing.save();
@@ -80,7 +96,6 @@ app.post(`/listings`, validateSchema, wrapAsync(async (req, res, next) => {
 
 //// Updating the Post ////
 // Edit Route
-
 app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
     let { id } = req.params;
     let detailByID = await Listing.findById(id);
@@ -88,7 +103,7 @@ app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
 }))
 
 // Update Route
-app.patch("/listings/:id", validateSchema, wrapAsync(async (req, res) => {
+app.patch("/listings/:id", validateListingSchema, wrapAsync(async (req, res) => {
     let { id } = req.params;
     // let id = req.params.id;
     console.log(id);
@@ -101,6 +116,30 @@ app.delete(`/listings/:id`, wrapAsync(async (req, res) => {
     let id = req.params.id;
     await Listing.findByIdAndDelete(id);
     res.redirect(`/listings`);
+}))
+
+// Review Route
+app.post(`/listings/:id/reviews`, wrapAsync(async (req, res) => {
+    let { id } = req.params;
+    let listing = await Listing.findById(id);
+    let newReview = new Review(req.body.review);
+
+    // Adding Review to Lisiting
+    listing.review.push(newReview);
+    listing.save();
+    newReview.save();
+    res.redirect(`/listings/${id}`);
+}))
+
+// Delete Review Route
+
+app.delete(`/listings/:id/review/:reviewId`, wrapAsync(async (req, res) => {
+    let listing = await Listing.findById(req.params.id);
+    let review = await Review.findById(req.params.reviewId);
+
+    await Listing.findByIdAndUpdate(req.params.id, { $pull: { review: req.params.reviewId } });
+    await Review.findByIdAndDelete(req.params.reviewId);
+    res.redirect(`/listings/${req.params.id}`);
 }))
 
 ///// Error Handling
