@@ -64,7 +64,7 @@
                         <p card-text>
                             <%= review.rating%> Stars
                         </p>
-                        <form action="/listings/<%= detailByID._id%>/review/<%= review._id %>?_method=DELETE"
+                        <form action="/listings/<%= detailByID._id%>/reviews/<%= review._id %>?_method=DELETE"
                             method="POST" class="mb-2">
                             <button class="btn btn-outline-dark btn-sm">Delete Review</button>
                         </form>

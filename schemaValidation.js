@@ -22,5 +22,7 @@ let reviewSchema = joi.object({
     }).required()
 })
 
-module.exports = reviewSchema;
+// module.exports = reviewSchema;
 module.exports = listeningSchema;
+
+// module.exports = { reviewSchema, listeningSchema };
