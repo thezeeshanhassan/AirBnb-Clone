@@ -1,24 +1,7 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index Route</title>
-</head> -->
 <% layout(`layouts/boilerplate`)%>
+    <h2 class="mt-5 mb-5">All Experiences Shown Here!!</h2>
 
     <body>
-        <h1>All Listing</h1>
-        <!-- <% for(let listing of allListing){ %> -->
-        <!-- <ul>
-                <li>
-                    <a href="/listing/<%=listing._id %>">
-                        <%= listing.title%>
-                    </a>
-                </li>
-            </ul>
-            <%} %> -->
         <div class="row row-cols-lg-4 row-cols-md-3 row-cols-sm-1">
             <% for(let listing of allListing){ %>
                 <div class="listing-card">

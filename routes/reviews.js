@@ -34,7 +34,7 @@ router.post(`/`, wrapAsync(async (req, res) => {
 
 // Delete Review Route
 
-router.delete(` /:reviewId`, wrapAsync(async (req, res) => {
+router.delete(`/:reviewId`, wrapAsync(async (req, res) => {
     let { id, reviewId } = req.params;
     let listing = await Listing.findById(id);
     let review = await Review.findById(reviewId);
