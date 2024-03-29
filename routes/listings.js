@@ -8,18 +8,18 @@ const ExpressError = require(`../utils/ExpressError`); // Extends JavaScript Err
 
 //// MiddleWares For Schema Validation (Server Side Validation)
 
-// const validateListingSchema = (req, res, next) => {
-//     let { error } = listeningSchema.validate(req.body);
-//     if (error) {
-//         console.log(error);
-//         // let { details } = error;
-//         // let errMsg = details[0].message;
-//         throw new ExpressError(400, error);
-//     }
-//     else {
-//         next();
-//     }
-// }
+const validateListingSchema = (req, res, next) => {
+    let { error } = listeningSchema.validate(req.body);
+    if (error) {
+        // let { details } = error;
+        // let errMsg = details[0].message;
+        // throw new ExpressError(400, error);
+        res.send(error);
+    }
+    else {
+        return next();
+    }
+}
 
 //// Route for Show All Listings
 router.get(`/`, wrapAsync(async (req, res, next) => {
@@ -42,7 +42,8 @@ router.get(`/:id`, wrapAsync(async (req, res) => {
 
 //// Insert New Post To Database From User
 // validateListingSchema MiddleWare Called while Server Side Validation
-router.post(`/`, wrapAsync(async (req, res, next) => {
+router.post(`/`, validateListingSchema, wrapAsync(async (req, res, next) => {
+
     // Validating Req.Body that Each Parameter Exists and Validated through Joi
     const newListing = new Listing(req.body.listing);
     await newListing.save();
@@ -61,7 +62,7 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 
 // Update Route
 // validateListingSchema MiddleWare Called while Server Side Validation
-router.patch("/:id", wrapAsync(async (req, res) => {
+router.patch("/:id", validateListingSchema, wrapAsync(async (req, res) => {
     let { id } = req.params;
     console.log(id);
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });

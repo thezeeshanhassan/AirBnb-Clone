@@ -3,24 +3,24 @@ const router = express.Router({ mergeParams: true });
 const Listing = require(`../models/listing`); // Listing Schema
 const wrapAsync = require(`../utils/wrapAsync`); // Function that Execute Other Functions If Error then throw Error
 const ExpressError = require(`../utils/ExpressError`); // Extends JavaScript Error Class 
-// const { listeningSchema, reviewSchema } = require(`./schemaValidation`); // Joi Schema Method to validate Schema (Post/Reqs)
+const { reviewSchema } = require(`../schemaValidation`); // Joi Schema Method to validate Schema (Post/Reqs)
 const Review = require(`../models/review`); // Review Schema
 
 //// MiddleWares For Schema Validation (Server Side Validation)
-// const validateReviewSchema = (req, res, next) => {
-//     let { error } = reviewSchema.validate(req.body);
-//     if (error) {
-//         let { details } = error;
-//         let errMsg = details[0].message;
-//         throw new ExpressError(400, errMsg);
-//     }
-//     else {
-//         next();
-//     }
-// }
+const validateReviewSchema = (req, res, next) => {
+    let { error } = reviewSchema.validate(req.body);
+    if (error) {
+        let { details } = error;
+        let errMsg = details[0].message;
+        throw new ExpressError(400, errMsg);
+    }
+    else {
+        return next();
+    }
+}
 
 // Creating Review Route
-router.post(`/`, wrapAsync(async (req, res) => {
+router.post(`/`, validateReviewSchema, wrapAsync(async (req, res) => {
     let { id } = req.params;
     let listing = await Listing.findById(id);
     let newReview = new Review(req.body.review);
