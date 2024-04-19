@@ -7,11 +7,17 @@ const ExpressError = require(`./utils/ExpressError`); // Extends JavaScript Erro
 const listings = require(`./routes/listings.js`); // Listing Route
 const reviews = require(`./routes/reviews.js`); // Review Route
 const session = require(`express-session`);
+const { cookie } = require("express/lib/response.js");
 
 const sessionOptions = {
     secret : "MySuperSecret",
     resave : false,
     saveUninitialized: true,
+    cookie : {
+        expires : Date.now() + 7 * 24 * 3600 * 1000,
+        maxAge : 7 * 24 * 3600 * 1000,
+        httpOnly : true
+    }
 }
 
 const app = express();
