@@ -4,8 +4,15 @@ const path = require(`path`); // Connect Path of Directories
 const methodOverride = require(`method-override`); // To obtain Patch or Put 
 const ejsMate = require(`ejs-mate`); // For Layouts Like BoilerPlate 
 const ExpressError = require(`./utils/ExpressError`); // Extends JavaScript Error Class 
-const listings = require(`./routes/listings.js`);
-const reviews = require(`./routes/reviews.js`);
+const listings = require(`./routes/listings.js`); // Listing Route
+const reviews = require(`./routes/reviews.js`); // Review Route
+const session = require(`express-session`);
+
+const sessionOptions = {
+    secret : "MySuperSecret",
+    resave : false,
+    saveUninitialized: true,
+}
 
 const app = express();
 
@@ -16,6 +23,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static('public'));
 app.use(methodOverride(`_method`));
 app.engine(`ejs`, ejsMate);
+app.use(session(sessionOptions));
 
 // Conection Creation Starts
 main().then(() => {
