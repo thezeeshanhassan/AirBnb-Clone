@@ -11,9 +11,9 @@ const ExpressError = require(`../utils/ExpressError`); // Extends JavaScript Err
 const validateListingSchema = (req, res, next) => {
     let { error } = listeningSchema.validate(req.body);
     if (error) {
-        // let { details } = error;
-        // let errMsg = details[0].message;
-        // throw new ExpressError(400, error);
+        let { details } = error;
+        let errMsg = details[0].message;
+        throw new ExpressError(400, error);
         res.send(error);
     }
     else {
@@ -22,6 +22,7 @@ const validateListingSchema = (req, res, next) => {
 }
 
 //// Route for Show All Listings
+
 router.get(`/`, wrapAsync(async (req, res, next) => {
     let allListing = await Listing.find({});
     res.render(`listings/index.ejs`, { allListing });
@@ -37,16 +38,22 @@ router.get(`/new`, (req, res) => {
 router.get(`/:id`, wrapAsync(async (req, res) => {
     let id = req.params.id;
     let detailByID = await Listing.findById(id).populate(`review`);
+    if (!detailByID) {
+        req.flash(`error`, "Post You Requested For Does Not Exist");
+        res.redirect(`/listings`);
+    }
     res.render(`listings/show.ejs`, { detailByID });
 }))
 
 //// Insert New Post To Database From User
 // validateListingSchema MiddleWare Called while Server Side Validation
+
 router.post(`/`, validateListingSchema, wrapAsync(async (req, res, next) => {
 
     // Validating Req.Body that Each Parameter Exists and Validated through Joi
     const newListing = new Listing(req.body.listing);
     await newListing.save();
+    req.flash(`success`, "New Post Added Successfully!");
     res.redirect(`/listings`);
 }))
 
@@ -57,6 +64,10 @@ router.post(`/`, validateListingSchema, wrapAsync(async (req, res, next) => {
 router.get("/:id/edit", wrapAsync(async (req, res) => {
     let { id } = req.params;
     let detailByID = await Listing.findById(id);
+    if (!detailByID) {
+        req.flash(`error`, "Post You Requested For Does Not Exist");
+        res.redirect(`/listings`);
+    }
     res.render(`listings/edit.ejs`, { detailByID });
 }))
 
@@ -66,6 +77,7 @@ router.patch("/:id", validateListingSchema, wrapAsync(async (req, res) => {
     let { id } = req.params;
     console.log(id);
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    req.flash(`success`, "Post Updated Successfully!");
     res.redirect(`/listings`);
 }))
 
@@ -73,6 +85,7 @@ router.patch("/:id", validateListingSchema, wrapAsync(async (req, res) => {
 router.delete(`/:id`, wrapAsync(async (req, res) => {
     let id = req.params.id;
     await Listing.findByIdAndDelete(id);
+    req.flash(`success`, "Post Deleted Successfully!");
     res.redirect(`/listings`);
 }))
 
