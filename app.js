@@ -4,10 +4,14 @@ const path = require(`path`); // Connect Path of Directories
 const methodOverride = require(`method-override`); // To obtain Patch or Put 
 const ejsMate = require(`ejs-mate`); // For Layouts Like BoilerPlate 
 const ExpressError = require(`./utils/ExpressError`); // Extends JavaScript Error Class 
-const listings = require(`./routes/listings.js`); // Listing Route
-const reviews = require(`./routes/reviews.js`); // Review Route
+const listingRoute = require(`./routes/listings.js`); // Listing Route
+const reviewRoute = require(`./routes/reviews.js`); // Review Route
 const session = require(`express-session`); //Express - Session
 const flash = require(`connect-flash`); // To Flash Success or Failure Message
+const passport = require(`passport`); // For Authentication (Main Library)
+const localStrategy = require(`passport-local`); // Strategy For Authentication
+const User = require(`./models/user.js`); //User Schema
+const userRoute = require(`./routes/users.js`);
 
 // Conection Creation Starts
 main().then(() => {
@@ -44,6 +48,17 @@ const sessionOptions = {
 app.use(session(sessionOptions));
 app.use(flash());
 
+////// Authentication With Passport Start
+
+app.use(passport.initialize()); //Initilize Passport Library
+app.use(passport.session()); //Checks Requests and Response and Session Details that Which User is getting Responses and doing Requests
+
+passport.use(new localStrategy(User.authenticate())); //Authenticate Every User with Local Stratgery
+passport.serializeUser(User.serializeUser()); // Store User Information in Session (Serialization)
+passport.deserializeUser(User.deserializeUser()); // UnStore User Information in Session (DeSerialization)
+
+////// Authentication With Passport Ends
+
 app.use((req, res, next) => {
     res.locals.success = req.flash(`success`);
     res.locals.error = req.flash(`error`);
@@ -51,8 +66,9 @@ app.use((req, res, next) => {
 })
 
 
-app.use("/listings", listings);
-app.use("/listings/:id/reviews", reviews);
+app.use("/listings", listingRoute);
+app.use("/listings/:id/reviews", reviewRoute);
+app.use("/signup", userRoute);
 
 // Conection Creation Ends
 app.get(`/`, (req, res) => {
