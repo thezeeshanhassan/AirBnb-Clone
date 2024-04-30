@@ -1,21 +1,27 @@
 const express = require(`express`);
-const router = express.Router({ mergeParams: true });
-const Listing = require(`../models/listing`); // Listing Schema
-const wrapAsync = require(`../utils/wrapAsync`); // Function that Execute Other Functions If Error then throw Error
-const ExpressError = require(`../utils/ExpressError`); // Extends JavaScript Error Class
-const User = require(`../models/user.js`);
+const router = express.Router({ mergeParams: true }); 
+const User = require(`../models/user.js`); // User Schema
 const passport = require(`passport`); // For Authentication (Main Library)
 const localStrategy = require(`passport-local`); // Strategy For Authentication
+const wrapAsync = require("../utils/wrapAsync.js");
 
 router.get(`/signup`, (req, res) => {
+    console.log("GET WORKIN");
     res.render(`../views/users/signup.ejs`);
 })
-router.post("/signup", async (req, res) => {
-    let { username, email, password } = req.params;
+router.post("/signup", wrapAsync(async (req, res) => {
+    try {
+        let { username, email, password } = req.body;
     let newUser = new User({ username, email });
-    let u = await newUser.register(newUser, password);
-    req.flash(`success`, "User Successfully Signed Up!");
+    let registeredUser = await User.register(newUser, password);
+    console.log(registeredUser);
+    req.flash(`success`, `${username}! You have Successfully Signed Up.`);
     res.redirect('/listings');
-})
+    }
+    catch(err) {
+        req.flash(`error`, err.message);
+        res.redirect(`/signup`);
+    }
+}))
 
 module.exports = router;

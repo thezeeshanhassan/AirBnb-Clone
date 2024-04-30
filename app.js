@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 
 app.use("/listings", listingRoute);
 app.use("/listings/:id/reviews", reviewRoute);
-app.use("/signup", userRoute);
+app.use("/", userRoute);
 
 // Conection Creation Ends
 app.get(`/`, (req, res) => {
