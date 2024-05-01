@@ -5,8 +5,9 @@ const passport = require(`passport`); // For Authentication (Main Library)
 const localStrategy = require(`passport-local`); // Strategy For Authentication
 const wrapAsync = require("../utils/wrapAsync.js");
 
+//// User Sign Up Route
+
 router.get(`/signup`, (req, res) => {
-    console.log("GET WORKIN");
     res.render(`../views/users/signup.ejs`);
 })
 router.post("/signup", wrapAsync(async (req, res) => {
@@ -24,4 +25,15 @@ router.post("/signup", wrapAsync(async (req, res) => {
     }
 }))
 
+//// User LogIn Route
+
+router.get(`/login`, (req,res) => {
+    res.render(`../views/users/login.ejs`);
+})
+//// PassPort.authenticate() is used for authentication is User Enter correct Credentials
+//// FailureFlash throw Flash
+router.post(`/login`,passport.authenticate(`local`, {failureRedirect : `/login`, failureFlash : true}),wrapAsync(async(req,res) => {
+    req.flash(`success`, `${req.body.username}! You have Successfully Logged In. Welcome!`);
+    res.redirect(`/listings`);
+}))
 module.exports = router;
