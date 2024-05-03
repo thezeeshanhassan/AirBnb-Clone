@@ -4,6 +4,7 @@ const Listing = require(`../models/listing`); // Listing Schema
 const wrapAsync = require(`../utils/wrapAsync`); // Function that Execute Other Functions If Error then throw Error
 const { listeningSchema } = require(`../schemaValidation.js`); // Joi Schema Method to validate Schema (Post/Reqs)
 const ExpressError = require(`../utils/ExpressError`); // Extends JavaScript Error Class 
+const {isLoggedIn} = require(`../middlewares.js`) // Middleware LoggedIn Checks that User is LoggedIn to perform CRUD operations
 
 
 //// MiddleWares For Schema Validation (Server Side Validation)
@@ -30,7 +31,8 @@ router.get(`/`, wrapAsync(async (req, res, next) => {
 
 //// Route to Create New Post
 
-router.get(`/new`, (req, res) => {
+router.get(`/new`,isLoggedIn, (req, res) => {
+    console.log(isLoggedIn);
     res.render(`listings/new.ejs`);
 })
 
@@ -48,7 +50,7 @@ router.get(`/:id`, wrapAsync(async (req, res) => {
 //// Insert New Post To Database From User
 // validateListingSchema MiddleWare Called while Server Side Validation
 
-router.post(`/`, validateListingSchema, wrapAsync(async (req, res, next) => {
+router.post(`/`,isLoggedIn ,validateListingSchema, wrapAsync(async (req, res, next) => {
 
     // Validating Req.Body that Each Parameter Exists and Validated through Joi
     const newListing = new Listing(req.body.listing);
@@ -61,7 +63,7 @@ router.post(`/`, validateListingSchema, wrapAsync(async (req, res, next) => {
 
 
 // Edit Route
-router.get("/:id/edit", wrapAsync(async (req, res) => {
+router.get("/:id/edit",isLoggedIn, wrapAsync(async (req, res) => {
     let { id } = req.params;
     let detailByID = await Listing.findById(id);
     if (!detailByID) {
@@ -73,7 +75,7 @@ router.get("/:id/edit", wrapAsync(async (req, res) => {
 
 // Update Route
 // validateListingSchema MiddleWare Called while Server Side Validation
-router.patch("/:id", validateListingSchema, wrapAsync(async (req, res) => {
+router.patch("/:id",isLoggedIn, validateListingSchema, wrapAsync(async (req, res) => {
     let { id } = req.params;
     console.log(id);
     await Listing.findByIdAndUpdate(id, { ...req.body.listing });
@@ -82,7 +84,7 @@ router.patch("/:id", validateListingSchema, wrapAsync(async (req, res) => {
 }))
 
 //// Delete Route
-router.delete(`/:id`, wrapAsync(async (req, res) => {
+router.delete(`/:id`,isLoggedIn, wrapAsync(async (req, res) => {
     let id = req.params.id;
     await Listing.findByIdAndDelete(id);
     req.flash(`success`, "Post Deleted Successfully!");
