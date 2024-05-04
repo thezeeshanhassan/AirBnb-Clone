@@ -15,9 +15,16 @@ router.post("/signup", wrapAsync(async (req, res) => {
         let { username, email, password } = req.body;
     let newUser = new User({ username, email });
     let registeredUser = await User.register(newUser, password);
+    // Automatically Login User after Sign Up
+    req.login(registeredUser,(err) => {
+        if(err) {
+            return next();
+        }
+        req.flash(`success`, `${username}! You have Successfully Signed Up.`);
+        res.redirect('/listings');
+    })
     console.log(registeredUser);
-    req.flash(`success`, `${username}! You have Successfully Signed Up.`);
-    res.redirect('/listings');
+    
     }
     catch(err) {
         req.flash(`error`, err.message);
@@ -40,10 +47,13 @@ router.post(`/login`,passport.authenticate(`local`, {failureRedirect : `/login`,
 // Logging Out From System
 router.get(`/logout`,(req,res,next) => {
     req.logout((err) => {
-        if(err) return next();
+        if(err) {
+            return next();
+        }
+        req.flash(`success`, `SuccessFully Logged Out!`);
+        res.redirect(`/listings`);
     })
-    req.flash(`success`, `SuccessFully Logged Out!`);
-    res.redirect(`/listings`);
+    
 })
 
 module.exports = router;
