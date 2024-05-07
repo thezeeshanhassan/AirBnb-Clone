@@ -4,6 +4,7 @@ const User = require(`../models/user.js`); // User Schema
 const passport = require(`passport`); // For Authentication (Main Library)
 const localStrategy = require(`passport-local`); // Strategy For Authentication
 const wrapAsync = require("../utils/wrapAsync.js");
+const {saveRedirectUrl} = require(`../middlewares.js`); //To get Redirecting Url (Path)
 
 //// User Sign Up Route
 
@@ -39,9 +40,12 @@ router.get(`/login`, (req,res) => {
 })
 //// PassPort.authenticate() is used for authentication is User Enter correct Credentials
 //// FailureFlash throw Flash
-router.post(`/login`,passport.authenticate(`local`, {failureRedirect : `/login`, failureFlash : true}),wrapAsync(async(req,res) => {
+//Save Redirect Url
+router.post(`/login`,saveRedirectUrl, passport.authenticate(`local`, {failureRedirect : `/login`, failureFlash : true}),wrapAsync(async(req,res) => {
     req.flash(`success`, `${req.body.username}! You have Successfully Logged In. Welcome!`);
-    res.redirect(`/listings`);
+    console.log(req.user._id);
+    let redirectUrl = res.locals.redirectUrl || `/listings`;
+    res.redirect(redirectUrl);
 }))
 
 // Logging Out From System

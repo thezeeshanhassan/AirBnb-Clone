@@ -5,8 +5,6 @@ const wrapAsync = require(`../utils/wrapAsync`); // Function that Execute Other 
 const { listeningSchema } = require(`../schemaValidation.js`); // Joi Schema Method to validate Schema (Post/Reqs)
 const ExpressError = require(`../utils/ExpressError`); // Extends JavaScript Error Class 
 const {isLoggedIn} = require(`../middlewares.js`) // Middleware LoggedIn Checks that User is LoggedIn to perform CRUD operations
-
-
 //// MiddleWares For Schema Validation (Server Side Validation)
 
 const validateListingSchema = (req, res, next) => {
@@ -39,7 +37,8 @@ router.get(`/new`,isLoggedIn, (req, res) => {
 //// Route to See Detail of Each Post (Show Route)
 router.get(`/:id`, wrapAsync(async (req, res) => {
     let id = req.params.id;
-    let detailByID = await Listing.findById(id).populate(`review`);
+    // To Get Detail of Each User
+    let detailByID = await Listing.findById(id).populate(`review`).populate(`owner`);
     if (!detailByID) {
         req.flash(`error`, "Post You Requested For Does Not Exist");
         res.redirect(`/listings`);
@@ -54,6 +53,7 @@ router.post(`/`,isLoggedIn ,validateListingSchema, wrapAsync(async (req, res, ne
 
     // Validating Req.Body that Each Parameter Exists and Validated through Joi
     const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
     await newListing.save();
     req.flash(`success`, "New Post Added Successfully!");
     res.redirect(`/listings`);
