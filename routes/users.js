@@ -43,7 +43,7 @@ router.get(`/login`, (req,res) => {
 //Save Redirect Url
 router.post(`/login`,saveRedirectUrl, passport.authenticate(`local`, {failureRedirect : `/login`, failureFlash : true}),wrapAsync(async(req,res) => {
     req.flash(`success`, `${req.body.username}! You have Successfully Logged In. Welcome!`);
-    console.log(req.user._id);
+    console.log(res.locals.redirectUrl);
     let redirectUrl = res.locals.redirectUrl || `/listings`;
     res.redirect(redirectUrl);
 }))
