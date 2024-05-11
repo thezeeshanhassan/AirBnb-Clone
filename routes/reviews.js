@@ -9,6 +9,7 @@ const { validateReviewSchema} = require(`../middlewares.js`);
 const {isLoggedIn} = require(`../middlewares.js`) // Middleware LoggedIn Checks that User is LoggedIn to perform CRUD operations
 const reviewController = require(`../controller/review.js`);
 
+/* router.route is used when multiple route has same path. It helps not to write same path repeatedly */
 
 // Creating Review Route
 router.post(`/`, isLoggedIn, validateReviewSchema, wrapAsync(reviewController.createNewReview));

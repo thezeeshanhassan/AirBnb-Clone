@@ -8,27 +8,29 @@ const {isRightUserForListing} = require(`../middlewares.js`) // To check Whether
 const {validateListingSchema} = require(`../middlewares.js`); // To Validate Listings
 const lisitngController = require(`../controller/listing.js`); // Listing Controller that contain all Lisitng Functions
 
+/* router.route is used when multiple route has same path. It helps not to write same path repeatedly */
+
+
+router.route(`/`)
 //// Route for Show All Listings
-router.get(`/`, wrapAsync(lisitngController.showAllListing));
+.get(wrapAsync(lisitngController.showAllListing))
+//// Insert New Post To Database From User
+// validateListingSchema MiddleWare Called while Server Side Validation
+.post(isLoggedIn ,validateListingSchema, wrapAsync(lisitngController.insertingNewPostinDB));
 
 //// Route to Create New Post
 router.get(`/new`,isLoggedIn, lisitngController.renderFormforNewPost);
 
+router.route(`/:id`)
 //// Route to See Detail of Each Post (Show Route)
-router.get(`/:id`, wrapAsync(lisitngController.detailOfEachPost));
-
-//// Insert New Post To Database From User
+.get(wrapAsync(lisitngController.detailOfEachPost))
+// Update Route
 // validateListingSchema MiddleWare Called while Server Side Validation
-router.post(`/`,isLoggedIn ,validateListingSchema, wrapAsync(lisitngController.insertingNewPostinDB));
+.patch(isLoggedIn,validateListingSchema, wrapAsync(lisitngController.updatePost))
+//// Delete Route
+.delete(isLoggedIn,isRightUserForListing, wrapAsync(lisitngController.deletePost));
 
 // Edit Route
 router.get("/:id/edit",isLoggedIn,isRightUserForListing, wrapAsync(lisitngController.editPost));
-
-// Update Route
-// validateListingSchema MiddleWare Called while Server Side Validation
-router.patch("/:id",isLoggedIn,validateListingSchema, wrapAsync(lisitngController.updatePost));
-
-//// Delete Route
-router.delete(`/:id`,isLoggedIn,isRightUserForListing, wrapAsync(lisitngController.deletePost));
 
 module.exports = router;
