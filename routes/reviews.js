@@ -7,52 +7,13 @@ const wrapAsync = require(`../utils/wrapAsync`); // Function that Execute Other 
 const Review = require(`../models/review`); // Review Schema
 const { validateReviewSchema} = require(`../middlewares.js`);
 const {isLoggedIn} = require(`../middlewares.js`) // Middleware LoggedIn Checks that User is LoggedIn to perform CRUD operations
+const reviewController = require(`../controller/review.js`);
 
-//// MiddleWares For Schema Validation (Server Side Validation)
-// const validateReviewSchema = (req, res, next) => {
-//     let { error } = reviewSchema.validate(req.body);
-//     if (error) {
-//         let { details } = error;
-//         let errMsg = details[0].message;
-//         throw new ExpressError(400, errMsg);
-//     }
-//     else {
-//         return next();
-//     }
-// }
 
 // Creating Review Route
-router.post(`/`, isLoggedIn, validateReviewSchema, wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let listing = await Listing.findById(id);
-    let newReview = new Review(req.body.review);
-    newReview.createdBy = req.user._id;
-    // Adding Review to Lisiting
-    listing.review.push(newReview);
-    listing.save();
-    newReview.save();
-    req.flash(`success`, "New Review Added Successfully!");
-    res.redirect(`/listings/${id}`);
-}))
+router.post(`/`, isLoggedIn, validateReviewSchema, wrapAsync(reviewController.createNewReview));
 
 // Delete Review Route
-
-router.delete(`/:reviewId`,isLoggedIn, wrapAsync(async (req, res) => {
-    let { id, reviewId } = req.params;
-    let listing = await Listing.findById(id);
-    let review = await Review.findById(reviewId);
-
-    if(req.user._id.equals(review.createdBy)) 
-    {
-    await Listing.findByIdAndUpdate(id, { $pull: { review: reviewId } });
-    req.flash(`success`, "Review Deleted Successfully!");
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/listings/${id}`);
-    }
-    else {
-        req.flash(`error`, "You are not the righ owner of this Review");
-        res.redirect(`/listings/${id}`);
-    }
-}))
+router.delete(`/:reviewId`,isLoggedIn, wrapAsync(reviewController.deleteReview));
 
 module.exports = router;

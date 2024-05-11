@@ -6,91 +6,29 @@ const {isLoggedIn} = require(`../middlewares.js`) // Middleware LoggedIn Checks 
 //// MiddleWares For Schema Validation (Server Side Validation)
 const {isRightUserForListing} = require(`../middlewares.js`) // To check Whether It is the Right Owner for Lisitng to Perform Update or Delete Operations
 const {validateListingSchema} = require(`../middlewares.js`); // To Validate Listings
-
-
-// const validateListingSchema = (req, res, next) => {
-//     let { error } = listeningSchema.validate(req.body);
-//     if (error) {
-//         let { details } = error;
-//         let errMsg = details[0].message;
-//         throw new ExpressError(400, error);
-//         res.send(error);
-//     }
-//     else {
-//         return next();
-//     }
-// }
+const lisitngController = require(`../controller/listing.js`); // Listing Controller that contain all Lisitng Functions
 
 //// Route for Show All Listings
-
-router.get(`/`, wrapAsync(async (req, res, next) => {
-    let allListing = await Listing.find({});
-    res.render(`listings/index.ejs`, { allListing });
-}))
+router.get(`/`, wrapAsync(lisitngController.showAllListing));
 
 //// Route to Create New Post
-
-router.get(`/new`,isLoggedIn, (req, res) => {
-    console.log(isLoggedIn);
-    res.render(`listings/new.ejs`);
-})
+router.get(`/new`,isLoggedIn, lisitngController.renderFormforNewPost);
 
 //// Route to See Detail of Each Post (Show Route)
-router.get(`/:id`, wrapAsync(async (req, res) => {
-    let id = req.params.id;
-    // To Get Detail of Each User
-    let detailByID = await Listing.findById(id).populate({path : `review`, populate : {path : `createdBy`}}).populate(`owner`);
-    if (!detailByID) {
-        req.flash(`error`, "Post You Requested For Does Not Exist");
-        res.redirect(`/listings`);
-    }
-    res.render(`listings/show.ejs`, { detailByID });
-}))
+router.get(`/:id`, wrapAsync(lisitngController.detailOfEachPost));
 
 //// Insert New Post To Database From User
 // validateListingSchema MiddleWare Called while Server Side Validation
-
-router.post(`/`,isLoggedIn ,validateListingSchema, wrapAsync(async (req, res, next) => {
-
-    // Validating Req.Body that Each Parameter Exists and Validated through Joi
-    const newListing = new Listing(req.body.listing);
-    console.log(req.user);
-    newListing.owner = req.user._id;
-    await newListing.save();
-    req.flash(`success`, "New Post Added Successfully!");
-    res.redirect(`/listings`);
-}))
-
-//// Updating the Post ////
-
+router.post(`/`,isLoggedIn ,validateListingSchema, wrapAsync(lisitngController.insertingNewPostinDB));
 
 // Edit Route
-router.get("/:id/edit",isLoggedIn,isRightUserForListing, wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    let detailByID = await Listing.findById(id);
-    if (!detailByID) {
-        req.flash(`error`, "Post You Requested For Does Not Exist");
-        res.redirect(`/listings`);
-    }
-    res.render(`listings/edit.ejs`, { detailByID });
-}))
+router.get("/:id/edit",isLoggedIn,isRightUserForListing, wrapAsync(lisitngController.editPost));
 
 // Update Route
 // validateListingSchema MiddleWare Called while Server Side Validation
-router.patch("/:id",isLoggedIn,validateListingSchema, wrapAsync(async (req, res) => {
-    let { id } = req.params;
-    console.log(id);
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-    req.flash(`success`, "Post Updated Successfully!");
-    res.redirect(`/listings`);
-}))
+router.patch("/:id",isLoggedIn,validateListingSchema, wrapAsync(lisitngController.updatePost));
 
 //// Delete Route
-router.delete(`/:id`,isLoggedIn,isRightUserForListing, wrapAsync(async (req, res) => {
-    let id = req.params.id;
-    await Listing.findByIdAndDelete(id);
-    req.flash(`success`, "Post Deleted Successfully!");
-    res.redirect(`/listings`);
-}))
+router.delete(`/:id`,isLoggedIn,isRightUserForListing, wrapAsync(lisitngController.deletePost));
 
 module.exports = router;
