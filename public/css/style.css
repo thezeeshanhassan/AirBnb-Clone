@@ -130,3 +130,8 @@ body {
     border: none;
     border-radius: 5px !important;
 }
+
+.preview-img{
+    width: 150px;
+    height: 100px;
+}

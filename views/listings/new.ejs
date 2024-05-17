@@ -1,7 +1,7 @@
 <% layout(`layouts/boilerplate`)%>
     <div class="row form-div">
         <div class="col-8 offset-1">
-            <form action="/listings" method="POST" novalidate class="needs-validation">
+            <form action="/listings" method="POST" novalidate class="needs-validation" enctype="multipart/form-data">
                 <br>
 
                 <div class="mb-3">
@@ -19,8 +19,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="image" class="from-label">Image URL:</label>
-                    <input type="text" id="image" name="listing[image]" class="form-control">
+                    <label for="image" class="from-label">Upload Image:</label>
+                    <input type="file" id="image" name="listing[image]" class="form-control">
                     <div class="invalid-feedback">Enter valid Image URL</div>
                 </div>
 
@@ -39,7 +39,7 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="location" class="from-label">Location:</label>
+                    <label for="location" class="from-label">City:</label>
                     <input type="text" id="location" name="listing[location]" required class="form-control">
                     <div class="invalid-feedback">Enter Valid Location</div>
                 </div>

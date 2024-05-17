@@ -26,11 +26,13 @@ module.exports.detailOfEachPost = async (req, res) => {
 
 //// Insert New Post To Database From User
 module.exports.insertingNewPostinDB = async (req, res, next) => {
-
-    // Validating Req.Body that Each Parameter Exists and Validated through Joi
+    let url = req.file.path;
+    let {filename} = req.file;
+    console.log(url + '...........' + filename);
+    // Validating Req.Body that Each Parameter Exists and Validated through Joi 
     const newListing = new Listing(req.body.listing);
-    console.log(req.user);
     newListing.owner = req.user._id;
+    newListing.image = {url, filename};
     await newListing.save();
     req.flash(`success`, "New Post Added Successfully!");
     res.redirect(`/listings`);
@@ -50,8 +52,14 @@ module.exports.editPost = async (req, res) => {
 //// Update Route
 module.exports.updatePost = async (req, res) => {
     let { id } = req.params;
-    console.log(id);
-    await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    let listing = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+    if(req.file)
+    {
+        let url = req.file.path;
+        let filename = req.file.filename;
+        listing.image = {url,filename}
+        listing.save();
+    }
     req.flash(`success`, "Post Updated Successfully!");
     res.redirect(`/listings`);
 }

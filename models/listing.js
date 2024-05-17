@@ -10,12 +10,11 @@ const ListingSchema = new mongoose.Schema({
     },
     description: {
         type: String,
-        require: true,
+        require: true, 
     },
     image: {
-        type: Object,
-        set: (v) => v === "" ? "https://www.istockphoto.com/photo/luxurious-villa-with-pool-gm506903162-84462663" : v,
-        default: "https://www.istockphoto.com/photo/luxurious-villa-with-pool-gm506903162-84462663",
+       url : String,
+       filenmae : String
     },
     price: {
         type: Number,

@@ -1,3 +1,4 @@
+require('dotenv').config()//.env to store credentials of cloud storage
 const express = require(`express`); // JS Library 
 const mongoose = require(`mongoose`); // Database MonoDb
 const path = require(`path`); // Connect Path of Directories

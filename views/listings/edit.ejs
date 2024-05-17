@@ -2,7 +2,7 @@
     <div class="row form-div">
         <div class="col-8 offset-1">
             <form method="POST" action="/listings/<%=detailByID._id%>?_method=PATCH" novalidate
-                class="needs-validation">
+                class="needs-validation" enctype="multipart/form-data">
                 <br>
                 <div class="mb-3 mt3">
                     <label for="title" class="form-label">Title:</label>
@@ -18,11 +18,13 @@
                         required><%= detailByID.description %></textarea>
                     <div class="invalid-feedback">Enter Valid Description</div>
                 </div>
-
+                
+                <div>
+                    <img src="<%= detailByID.image.url %>" class="preview-img">
+                </div>
                 <div class="mb-3">
-                    <label for="image" class="form-label">Image URL:</label>
-                    <input type="text" id="image" class="form-control" name="listing[image]"
-                        value="<%= detailByID.image.url%>">
+                    <label for="image" class="form-label">Upload Image: </label>
+                    <input type="file" id="image" class="form-control" name="listing[image]">
                     <!-- <div class="invalid-feedback">Enter valid Image URL</div> -->
                 </div>
 
@@ -43,7 +45,7 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="location" class="form-label">Location:</label>
+                    <label for="location" class="form-label">City:</label>
                     <input type="text" class="form-control" id="location" name="listing[location]"
                         value="<%= detailByID.location %>" required>
                     <div class="invalid-feedback">Enter Valid Location</div>
